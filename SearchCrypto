@@ -1,0 +1,51 @@
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+import requests
+
+# Telegram bot token
+TOKEN = 'your_token_here'
+
+# Function to handle the /start command
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Welcome to the CryptoBot! Type /search followed by your query to find information in the cryptosphere.')
+
+# Function to handle the /search command
+def search(update: Update, context: CallbackContext) -> None:
+    query = ' '.join(context.args)
+    if query:
+        # Call a function to search for information based on the query
+        results = search_cryptosphere(query)
+        update.message.reply_text(results)
+    else:
+        update.message.reply_text('Please provide a query to search.')
+
+# Function to search for information in the cryptosphere
+def search_cryptosphere(query: str) -> str:
+    # This is a placeholder function. You can replace it with your own implementation
+    # For example, you can use APIs from crypto-related websites or databases to search for information
+    # Here, we'll simply return a dummy response
+    return f'Searching for "{query}" in the cryptosphere... \nResults will appear here.'
+
+# Function to handle messages
+def echo(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Sorry, I didn\'t understand that command. Please type /search followed by your query.')
+
+def main() -> None:
+    updater = Updater(TOKEN)
+
+    # Get the dispatcher to register handlers
+    dispatcher = updater.dispatcher
+
+    # Define handlers
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("search", search))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until you press Ctrl-C
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
